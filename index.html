@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Android Debug Log Translator</title>
+    <title>Android & iOS Debug Log Translator</title>
     <style>
         * {
             margin: 0;
@@ -36,7 +36,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 32px 24px;
         }
@@ -420,12 +420,200 @@
         .hidden {
             display: none;
         }
+
+        .input-panes {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-pane {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .input-pane h3 {
+            color: #a8d8ea;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .input-pane .upload-area {
+            padding: 28px;
+        }
+
+        .input-pane .paste-section {
+            margin-top: 14px;
+        }
+
+        .input-pane .paste-section textarea {
+            height: 120px;
+        }
+
+        .input-status {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            min-height: 1.2em;
+        }
+
+        .compare-bar {
+            margin-top: 20px;
+            padding: 14px 20px;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+        }
+
+        .compare-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: #a8d8ea;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .compare-toggle.disabled {
+            color: #7a7a9e;
+            cursor: not-allowed;
+        }
+
+        .compare-toggle input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #a8d8ea;
+            cursor: pointer;
+        }
+
+        .platform-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .platform-badge.android {
+            background: #1b5e20;
+            color: #a5d6a7;
+        }
+
+        .platform-badge.ios {
+            background: #1a237e;
+            color: #9fa8da;
+        }
+
+        .only-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .only-badge.only-android {
+            background: #1b5e20;
+            color: #a5d6a7;
+        }
+
+        .only-badge.only-ios {
+            background: #1a237e;
+            color: #9fa8da;
+        }
+
+        .diff-warning {
+            background: #3b2f0f;
+            border: 1px solid #6b5a1f;
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 14px;
+        }
+
+        .diff-warning-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #f0d060;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .diff-table th {
+            text-align: left;
+            padding: 6px 0;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #7a7a9e;
+            font-weight: 600;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .diff-table td {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            font-family: 'Consolas', monospace;
+            vertical-align: top;
+        }
+
+        .diff-table tr:not(:last-child) td {
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .diff-table .param-key {
+            padding-right: 12px;
+        }
+
+        .diff-table .val-diff {
+            color: #f0d060;
+            font-weight: 700;
+        }
+
+        .diff-table .val-missing {
+            color: #e05555;
+            font-style: italic;
+        }
+
+        .event-card.has-diffs {
+            border-color: #6b5a1f;
+        }
+
+        .results-columns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .results-column {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .results-column-header {
+            color: #a8d8ea;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .input-panes,
+            .results-columns {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Android Debug Log Translator</h1>
-        <p>Upload or paste Android debug logs to extract and format AnalyticsTracker events</p>
+        <h1>Android & iOS Debug Log Translator</h1>
+        <p>Upload or paste Android or iOS debug logs to extract and format analytics events</p>
     </header>
 
     <div class="container">
@@ -437,16 +625,44 @@
             </div>
         </div>
 
-        <div class="upload-area" id="uploadArea" style="margin-top: 28px;">
-            <h2>Drop your log file here</h2>
-            <p>or click to browse (.txt)</p>
-            <input type="file" id="fileInput" accept=".txt,.log">
+        <div class="input-panes" style="margin-top: 28px;">
+            <div class="input-pane">
+                <h3>Android Log</h3>
+                <div class="upload-area" id="uploadAreaAndroid">
+                    <h2>Drop Android log here</h2>
+                    <p>or click to browse (.txt)</p>
+                    <input type="file" id="fileInputAndroid" accept=".txt,.log">
+                </div>
+                <div class="paste-section">
+                    <label for="pasteInputAndroid">Or paste Android log:</label>
+                    <textarea id="pasteInputAndroid" placeholder="Paste Android debug log here..."></textarea>
+                    <button class="btn" id="parseBtnAndroid">Parse Android</button>
+                    <button class="btn btn-danger" id="clearBtnAndroid" style="margin-left:6px;">Clear</button>
+                </div>
+                <div class="input-status" id="androidStatus"></div>
+            </div>
+            <div class="input-pane">
+                <h3>iOS Log</h3>
+                <div class="upload-area" id="uploadAreaIos">
+                    <h2>Drop iOS log here</h2>
+                    <p>or click to browse (.txt)</p>
+                    <input type="file" id="fileInputIos" accept=".txt,.log">
+                </div>
+                <div class="paste-section">
+                    <label for="pasteInputIos">Or paste iOS log:</label>
+                    <textarea id="pasteInputIos" placeholder="Paste iOS debug log here..."></textarea>
+                    <button class="btn" id="parseBtnIos">Parse iOS</button>
+                    <button class="btn btn-danger" id="clearBtnIos" style="margin-left:6px;">Clear</button>
+                </div>
+                <div class="input-status" id="iosStatus"></div>
+            </div>
         </div>
 
-        <div class="paste-section">
-            <label for="pasteInput">Or paste log text directly:</label>
-            <textarea id="pasteInput" placeholder="Paste your Android debug log here..."></textarea>
-            <button class="btn" id="parseBtn">Parse Logs</button>
+        <div class="compare-bar">
+            <label class="compare-toggle disabled" id="compareLabel">
+                <input type="checkbox" id="compareToggle" disabled>
+                <span>Compare Android vs iOS</span>
+            </label>
         </div>
 
         <div class="results hidden" id="results">
@@ -482,10 +698,23 @@
         const logsCollection = collection(db, 'saved_logs');
 
         // DOM elements
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const pasteInput = document.getElementById('pasteInput');
-        const parseBtn = document.getElementById('parseBtn');
+        const uploadAreaAndroid = document.getElementById('uploadAreaAndroid');
+        const fileInputAndroid = document.getElementById('fileInputAndroid');
+        const pasteInputAndroid = document.getElementById('pasteInputAndroid');
+        const parseBtnAndroid = document.getElementById('parseBtnAndroid');
+        const clearBtnAndroid = document.getElementById('clearBtnAndroid');
+        const androidStatusEl = document.getElementById('androidStatus');
+
+        const uploadAreaIos = document.getElementById('uploadAreaIos');
+        const fileInputIos = document.getElementById('fileInputIos');
+        const pasteInputIos = document.getElementById('pasteInputIos');
+        const parseBtnIos = document.getElementById('parseBtnIos');
+        const clearBtnIos = document.getElementById('clearBtnIos');
+        const iosStatusEl = document.getElementById('iosStatus');
+
+        const compareToggle = document.getElementById('compareToggle');
+        const compareLabel = document.getElementById('compareLabel');
+
         const resultsEl = document.getElementById('results');
         const eventList = document.getElementById('eventList');
         const eventCountEl = document.getElementById('eventCount');
@@ -495,6 +724,8 @@
         const statusMsg = document.getElementById('statusMsg');
         const savedLogList = document.getElementById('savedLogList');
 
+        let androidEvents = [];
+        let iosEvents = [];
         let lastParsedEvents = [];
 
         // ---- Firebase: Save to cloud ----
@@ -635,39 +866,97 @@
         }
 
         // ---- File upload ----
-        uploadArea.addEventListener('click', () => fileInput.click());
+        function setupUploadArea(uploadArea, fileInput, pasteInput, parseCallback) {
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        pasteInput.value = ev.target.result;
+                        parseCallback(ev.target.result);
+                    };
+                    reader.readAsText(e.target.files[0]);
+                }
+            });
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        pasteInput.value = ev.target.result;
+                        parseCallback(ev.target.result);
+                    };
+                    reader.readAsText(e.dataTransfer.files[0]);
+                }
+            });
+        }
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) readFile(e.target.files[0]);
+        function parseAndroidText(text) {
+            const lines = text.split('\n');
+            const analyticsLines = lines.filter(l => l.includes('AnalyticsTracker'));
+            androidEvents = analyticsLines.map(parseAnalyticsLine).filter(Boolean);
+            androidStatusEl.textContent = androidEvents.length > 0
+                ? `${androidEvents.length} event(s) parsed`
+                : 'No AnalyticsTracker entries found';
+            androidStatusEl.style.color = androidEvents.length > 0 ? '#5cb85c' : '#e05555';
+            updateCompareToggle();
+            refreshView();
+        }
+
+        function parseIOSText(text) {
+            iosEvents = parseIOSLogs(text);
+            iosStatusEl.textContent = iosEvents.length > 0
+                ? `${iosEvents.length} event(s) parsed`
+                : 'No iOS analytics entries found';
+            iosStatusEl.style.color = iosEvents.length > 0 ? '#5cb85c' : '#e05555';
+            updateCompareToggle();
+            refreshView();
+        }
+
+        setupUploadArea(uploadAreaAndroid, fileInputAndroid, pasteInputAndroid, parseAndroidText);
+        setupUploadArea(uploadAreaIos, fileInputIos, pasteInputIos, parseIOSText);
+
+        parseBtnAndroid.addEventListener('click', () => {
+            const text = pasteInputAndroid.value.trim();
+            if (text) parseAndroidText(text);
         });
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
+        parseBtnIos.addEventListener('click', () => {
+            const text = pasteInputIos.value.trim();
+            if (text) parseIOSText(text);
         });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
+        clearBtnAndroid.addEventListener('click', () => {
+            pasteInputAndroid.value = '';
+            androidEvents = [];
+            androidStatusEl.textContent = '';
+            updateCompareToggle();
+            refreshView();
         });
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) readFile(e.dataTransfer.files[0]);
+        clearBtnIos.addEventListener('click', () => {
+            pasteInputIos.value = '';
+            iosEvents = [];
+            iosStatusEl.textContent = '';
+            updateCompareToggle();
+            refreshView();
         });
 
-        parseBtn.addEventListener('click', () => {
-            const text = pasteInput.value.trim();
-            if (text) processLogs(text);
-        });
+        compareToggle.addEventListener('change', refreshView);
 
-        function readFile(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                pasteInput.value = e.target.result;
-                processLogs(e.target.result);
-            };
-            reader.readAsText(file);
+        function updateCompareToggle() {
+            const canCompare = androidEvents.length > 0 && iosEvents.length > 0;
+            compareToggle.disabled = !canCompare;
+            compareLabel.classList.toggle('disabled', !canCompare);
+            if (!canCompare) compareToggle.checked = false;
         }
 
         // ---- Parsing ----
@@ -728,74 +1017,389 @@
             return REQUIRED_GLOBAL_PARAMS.filter(rp => !keys.has(rp));
         }
 
-        function processLogs(text) {
-            const lines = text.split('\n');
-            const analyticsLines = lines.filter(l => l.includes('AnalyticsTracker'));
+        const IGNORED_COMPARE_PARAMS = [
+            'csob.d.timestamp',
+            'csob.d.application_version',
+            'csob.d.device_id',
+            'csob.d.environment',
+            'csob.d.cuid',
+        ];
 
-            eventList.innerHTML = '';
+        // ---- iOS Parsing ----
+        function parseIOSLogs(text) {
+            const blocks = text.split(/^-{6,}$/m);
+            const events = [];
 
-            if (analyticsLines.length === 0) {
-                resultsEl.classList.remove('hidden');
-                eventCountEl.textContent = '0 events';
-                eventList.innerHTML = '<div class="no-results">No AnalyticsTracker entries found in the log.</div>';
+            for (const block of blocks) {
+                const trimmed = block.trim();
+                if (!trimmed) continue;
+
+                // Match header: timestamp + event name
+                const headerMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+[^\s]*)\s+(.+?)\s*:$/m);
+                if (!headerMatch) continue;
+
+                const timestamp = headerMatch[1];
+                const eventName = headerMatch[2].trim();
+
+                // Skip GlobalParameters block
+                if (eventName === 'GlobalParameters') continue;
+
+                // Parse the JSON body
+                const jsonStart = trimmed.indexOf('{');
+                if (jsonStart === -1) continue;
+
+                let jsonObj;
+                try {
+                    jsonObj = JSON.parse(trimmed.substring(jsonStart));
+                } catch (e) {
+                    continue;
+                }
+
+                const params = Object.entries(jsonObj).map(([key, value]) => ({
+                    key,
+                    value: String(value)
+                }));
+
+                // Determine type: csob.e.* event names are actions, others are states
+                const trackType = eventName.startsWith('csob.e.') ? 'action' : 'state';
+
+                events.push({ timestamp, eventName, trackType, params });
+            }
+
+            return events;
+        }
+
+        // ---- View refresh ----
+        function refreshView() {
+            const compare = compareToggle.checked;
+
+            if (compare && androidEvents.length > 0 && iosEvents.length > 0) {
+                renderComparison(androidEvents, iosEvents);
                 return;
             }
 
-            const events = analyticsLines.map(parseAnalyticsLine).filter(Boolean);
-            lastParsedEvents = events;
+            // Both loaded without compare -> side by side
+            if (androidEvents.length > 0 && iosEvents.length > 0) {
+                renderSideBySide(androidEvents, iosEvents);
+                return;
+            }
 
+            // Single platform
+            const events = androidEvents.length > 0 ? androidEvents : iosEvents;
+            if (events.length === 0) {
+                resultsEl.classList.add('hidden');
+                return;
+            }
+
+            lastParsedEvents = events;
             renderEvents(events);
+        }
+
+        function renderEventCard(ev) {
+            const typeLabel = ev.trackType === 'state' ? 'State' : 'Action';
+            const headerClass = ev.trackType === 'state' ? 'track-state' : 'track-action';
+            const badgeClass = ev.trackType;
+
+            const missing = getMissingParams(ev.params);
+            const hasErrors = missing.length > 0;
+
+            let bodyHtml = '';
+
+            if (hasErrors) {
+                bodyHtml += `<div class="missing-params">
+                    <div class="missing-params-title">Missing global parameters (${missing.length})</div>
+                    <ul class="missing-params-list">
+                        ${missing.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+                    </ul>
+                </div>`;
+            }
+
+            if (ev.params.length > 0) {
+                bodyHtml += `<div class="param-group">
+                    <div class="param-group-title">Parameters</div>
+                    ${buildParamTable(ev.params)}
+                </div>`;
+            }
+
+            return `<div class="event-card${hasErrors ? ' has-errors' : ''}">
+                <div class="event-card-header ${headerClass}">
+                    <div class="event-header-left">
+                        <span class="event-type-badge ${badgeClass}">${typeLabel}</span>
+                        <span class="event-name">${escapeHtml(ev.eventName)}</span>
+                    </div>
+                    <span class="event-timestamp">${escapeHtml(ev.timestamp)}</span>
+                </div>
+                <div class="event-card-body">
+                    ${bodyHtml || '<p style="color:#7a7a9e">No parameters found.</p>'}
+                </div>
+            </div>`;
         }
 
         function renderEvents(events) {
             resultsEl.classList.remove('hidden');
             eventCountEl.textContent = `${events.length} event${events.length !== 1 ? 's' : ''}`;
-            eventList.innerHTML = '';
-
-            for (let i = 0; i < events.length; i++) {
-                const ev = events[i];
-                const typeLabel = ev.trackType === 'state' ? 'State' : 'Action';
-                const headerClass = ev.trackType === 'state' ? 'track-state' : 'track-action';
-                const badgeClass = ev.trackType;
-
-                const missing = getMissingParams(ev.params);
-                const hasErrors = missing.length > 0;
-
-                let bodyHtml = '';
-
-                if (hasErrors) {
-                    bodyHtml += `<div class="missing-params">
-                        <div class="missing-params-title">Missing global parameters (${missing.length})</div>
-                        <ul class="missing-params-list">
-                            ${missing.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
-                        </ul>
-                    </div>`;
-                }
-
-                if (ev.params.length > 0) {
-                    bodyHtml += `<div class="param-group">
-                        <div class="param-group-title">Parameters</div>
-                        ${buildParamTable(ev.params)}
-                    </div>`;
-                }
-
-                eventList.innerHTML += `
-                    <div class="event-card${hasErrors ? ' has-errors' : ''}">
-                        <div class="event-card-header ${headerClass}">
-                            <div class="event-header-left">
-                                <span class="event-type-badge ${badgeClass}">${typeLabel}</span>
-                                <span class="event-name">${escapeHtml(ev.eventName)}</span>
-                            </div>
-                            <span class="event-timestamp">${escapeHtml(ev.timestamp)}</span>
-                        </div>
-                        <div class="event-card-body">
-                            ${bodyHtml || '<p style="color:#7a7a9e">No parameters found.</p>'}
-                        </div>
-                    </div>`;
-            }
+            eventList.innerHTML = events.map(renderEventCard).join('');
         }
 
-        // ---- Init: load saved logs on page load ----
+        function renderSideBySide(aEvents, iEvents) {
+            resultsEl.classList.remove('hidden');
+            const total = aEvents.length + iEvents.length;
+            eventCountEl.textContent = `${total} event${total !== 1 ? 's' : ''} (${aEvents.length} Android, ${iEvents.length} iOS)`;
+
+            lastParsedEvents = [
+                ...aEvents.map(e => ({...e, platform: 'android'})),
+                ...iEvents.map(e => ({...e, platform: 'ios'}))
+            ];
+
+            const aHtml = aEvents.map(renderEventCard).join('');
+            const iHtml = iEvents.map(renderEventCard).join('');
+
+            eventList.innerHTML = `
+                <div class="results-columns">
+                    <div class="results-column">
+                        <div class="results-column-header">
+                            <span class="platform-badge android">Android</span>
+                            ${aEvents.length} event${aEvents.length !== 1 ? 's' : ''}
+                        </div>
+                        ${aHtml}
+                    </div>
+                    <div class="results-column">
+                        <div class="results-column-header">
+                            <span class="platform-badge ios">iOS</span>
+                            ${iEvents.length} event${iEvents.length !== 1 ? 's' : ''}
+                        </div>
+                        ${iHtml}
+                    </div>
+                </div>`;
+        }
+
+        // ---- Comparison ----
+        function compareParams(aParams, iParams) {
+            const aMap = new Map(aParams.map(p => [p.key, p.value]));
+            const iMap = new Map(iParams.map(p => [p.key, p.value]));
+            const allKeys = new Set([...aMap.keys(), ...iMap.keys()]);
+
+            const diffs = [];
+            for (const key of allKeys) {
+                if (IGNORED_COMPARE_PARAMS.includes(key)) continue;
+                const aVal = aMap.has(key) ? aMap.get(key) : null;
+                const iVal = iMap.has(key) ? iMap.get(key) : null;
+                if (aVal !== iVal) {
+                    diffs.push({ key, android: aVal, ios: iVal });
+                }
+            }
+            return diffs;
+        }
+
+        function renderComparison(aEvents, iEvents) {
+            resultsEl.classList.remove('hidden');
+            eventList.innerHTML = '';
+
+            // Group by eventName+trackType, match by occurrence index
+            const androidMap = new Map();
+            for (const ev of aEvents) {
+                const key = ev.trackType + ':' + ev.eventName;
+                if (!androidMap.has(key)) androidMap.set(key, []);
+                androidMap.get(key).push(ev);
+            }
+
+            const iosMap = new Map();
+            for (const ev of iEvents) {
+                const key = ev.trackType + ':' + ev.eventName;
+                if (!iosMap.has(key)) iosMap.set(key, []);
+                iosMap.get(key).push(ev);
+            }
+
+            // Collect all unique keys in order of first appearance
+            const allKeys = [];
+            const seen = new Set();
+            for (const ev of [...aEvents, ...iEvents]) {
+                const key = ev.trackType + ':' + ev.eventName;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    allKeys.push(key);
+                }
+            }
+
+            let totalDiffs = 0;
+            let totalMatched = 0;
+            let totalUnmatched = 0;
+            const cards = [];
+
+            for (const key of allKeys) {
+                const aList = androidMap.get(key) || [];
+                const iList = iosMap.get(key) || [];
+                const maxLen = Math.max(aList.length, iList.length);
+
+                for (let idx = 0; idx < maxLen; idx++) {
+                    const aEv = aList[idx] || null;
+                    const iEv = iList[idx] || null;
+
+                    if (aEv && iEv) {
+                        totalMatched++;
+                        const diffs = compareParams(aEv.params, iEv.params);
+                        if (diffs.length > 0) totalDiffs++;
+                        cards.push(renderCompareCard(aEv, iEv, diffs));
+                    } else if (aEv) {
+                        totalUnmatched++;
+                        cards.push(renderUnmatchedCard(aEv, 'android'));
+                    } else {
+                        totalUnmatched++;
+                        cards.push(renderUnmatchedCard(iEv, 'ios'));
+                    }
+                }
+            }
+
+            let summary = `${totalMatched + totalUnmatched} event(s)`;
+            if (totalDiffs > 0) summary += ` · ${totalDiffs} with differences`;
+            if (totalUnmatched > 0) summary += ` · ${totalUnmatched} unmatched`;
+            eventCountEl.textContent = summary;
+
+            lastParsedEvents = [...aEvents.map(e => ({...e, platform: 'android'})), ...iEvents.map(e => ({...e, platform: 'ios'}))];
+            eventList.innerHTML = cards.join('');
+        }
+
+        function renderCompareCard(aEv, iEv, diffs) {
+            const typeLabel = aEv.trackType === 'state' ? 'State' : 'Action';
+            const headerClass = aEv.trackType === 'state' ? 'track-state' : 'track-action';
+            const badgeClass = aEv.trackType;
+            const hasDiffs = diffs.length > 0;
+
+            const aMissing = getMissingParams(aEv.params);
+            const iMissing = getMissingParams(iEv.params);
+
+            let bodyHtml = '';
+
+            if (hasDiffs) {
+                const valueDiffs = diffs.filter(d => d.android !== null && d.ios !== null);
+                const onlyAndroid = diffs.filter(d => d.ios === null);
+                const onlyIos = diffs.filter(d => d.android === null);
+
+                if (valueDiffs.length > 0) {
+                    bodyHtml += `<div class="diff-warning">
+                        <div class="diff-warning-title">Parameter differences (${valueDiffs.length})</div>
+                        <table class="diff-table">
+                            <tr><th style="width:1%;white-space:nowrap;">Parameter</th><th>Android</th><th>iOS</th></tr>
+                            ${valueDiffs.map(d => `<tr>
+                                <td class="param-key">${escapeHtml(d.key)}</td>
+                                <td class="val-diff">${escapeHtml(d.android)}</td>
+                                <td class="val-diff">${escapeHtml(d.ios)}</td>
+                            </tr>`).join('')}
+                        </table>
+                    </div>`;
+                }
+
+                if (onlyAndroid.length > 0) {
+                    bodyHtml += `<div class="diff-warning">
+                        <div class="diff-warning-title">Only in Android (${onlyAndroid.length})</div>
+                        <table class="diff-table">
+                            ${onlyAndroid.map(d => `<tr>
+                                <td class="param-key">${escapeHtml(d.key)}</td>
+                                <td class="val-diff">${escapeHtml(d.android)}</td>
+                            </tr>`).join('')}
+                        </table>
+                    </div>`;
+                }
+
+                if (onlyIos.length > 0) {
+                    bodyHtml += `<div class="diff-warning">
+                        <div class="diff-warning-title">Only in iOS (${onlyIos.length})</div>
+                        <table class="diff-table">
+                            ${onlyIos.map(d => `<tr>
+                                <td class="param-key">${escapeHtml(d.key)}</td>
+                                <td class="val-diff">${escapeHtml(d.ios)}</td>
+                            </tr>`).join('')}
+                        </table>
+                    </div>`;
+                }
+            }
+
+            if (aMissing.length > 0) {
+                bodyHtml += `<div class="missing-params">
+                    <div class="missing-params-title">Missing global params — Android (${aMissing.length})</div>
+                    <ul class="missing-params-list">${aMissing.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                </div>`;
+            }
+
+            if (iMissing.length > 0) {
+                bodyHtml += `<div class="missing-params">
+                    <div class="missing-params-title">Missing global params — iOS (${iMissing.length})</div>
+                    <ul class="missing-params-list">${iMissing.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                </div>`;
+            }
+
+            // Show matching params
+            const aMap = new Map(aEv.params.map(p => [p.key, p.value]));
+            const iMap = new Map(iEv.params.map(p => [p.key, p.value]));
+            const matchingParams = aEv.params.filter(p => iMap.has(p.key) && iMap.get(p.key) === p.value);
+
+            if (matchingParams.length > 0) {
+                bodyHtml += `<div class="param-group">
+                    <div class="param-group-title">Matching Parameters (${matchingParams.length})</div>
+                    ${buildParamTable(matchingParams)}
+                </div>`;
+            }
+
+            const cardClass = hasDiffs ? ' has-diffs' : (aMissing.length > 0 || iMissing.length > 0 ? ' has-errors' : '');
+
+            return `<div class="event-card${cardClass}">
+                <div class="event-card-header ${headerClass}">
+                    <div class="event-header-left">
+                        <span class="event-type-badge ${badgeClass}">${typeLabel}</span>
+                        <span class="event-name">${escapeHtml(aEv.eventName)}</span>
+                        ${!hasDiffs ? '<span style="color:#5cb85c;font-size:0.8rem;font-weight:700;">&#10003; Match</span>' : ''}
+                    </div>
+                    <div style="text-align:right;font-size:0.8rem;">
+                        <div><span class="platform-badge android">Android</span> <span class="event-timestamp">${escapeHtml(aEv.timestamp)}</span></div>
+                        <div style="margin-top:2px;"><span class="platform-badge ios">iOS</span> <span class="event-timestamp">${escapeHtml(iEv.timestamp)}</span></div>
+                    </div>
+                </div>
+                <div class="event-card-body">
+                    ${bodyHtml || '<p style="color:#5cb85c">All parameters match.</p>'}
+                </div>
+            </div>`;
+        }
+
+        function renderUnmatchedCard(ev, platform) {
+            const typeLabel = ev.trackType === 'state' ? 'State' : 'Action';
+            const headerClass = ev.trackType === 'state' ? 'track-state' : 'track-action';
+            const badgeClass = ev.trackType;
+            const platformLabel = platform === 'android' ? 'Android' : 'iOS';
+            const onlyClass = platform === 'android' ? 'only-android' : 'only-ios';
+
+            const missing = getMissingParams(ev.params);
+            let bodyHtml = '';
+
+            if (missing.length > 0) {
+                bodyHtml += `<div class="missing-params">
+                    <div class="missing-params-title">Missing global parameters (${missing.length})</div>
+                    <ul class="missing-params-list">${missing.map(p => `<li>${escapeHtml(p)}</li>`).join('')}</ul>
+                </div>`;
+            }
+
+            if (ev.params.length > 0) {
+                bodyHtml += `<div class="param-group">
+                    <div class="param-group-title">Parameters</div>
+                    ${buildParamTable(ev.params)}
+                </div>`;
+            }
+
+            return `<div class="event-card has-diffs">
+                <div class="event-card-header ${headerClass}">
+                    <div class="event-header-left">
+                        <span class="event-type-badge ${badgeClass}">${typeLabel}</span>
+                        <span class="event-name">${escapeHtml(ev.eventName)}</span>
+                        <span class="only-badge ${onlyClass}">Only in ${platformLabel}</span>
+                    </div>
+                    <span class="event-timestamp">${escapeHtml(ev.timestamp)}</span>
+                </div>
+                <div class="event-card-body">
+                    ${bodyHtml || '<p style="color:#7a7a9e">No parameters found.</p>'}
+                </div>
+            </div>`;
+        }
+
+        // ---- Init ----
         loadSavedLogs();
     </script>
 </body>
