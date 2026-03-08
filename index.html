@@ -681,21 +681,12 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTzIQ-VQB2TQg5TPYfSjYdW7lab8BPy14",
-            authDomain: "android-log-debugger.firebaseapp.com",
-            projectId: "android-log-debugger",
-            storageBucket: "android-log-debugger.firebasestorage.app",
-            messagingSenderId: "340649945761",
-            appId: "1:340649945761:web:10e11531571e72096b5ee0"
-        };
+        const SUPABASE_URL = "https://pqgtlccgvhvxtirhltyl.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxZ3RsY2Nndmh2eHRpcmhsdHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NjAzNzIsImV4cCI6MjA4ODUzNjM3Mn0.3fqap5eZaPAVQDPiTNl-Z0lZm9ennCMW8UG1VyteHhI";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const logsCollection = collection(db, 'saved_logs');
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // DOM elements
         const uploadAreaAndroid = document.getElementById('uploadAreaAndroid');
@@ -728,7 +719,7 @@
         let iosEvents = [];
         let lastParsedEvents = [];
 
-        // ---- Firebase: Save to cloud ----
+        // ---- Supabase: Save to cloud ----
         saveCloudBtn.addEventListener('click', async () => {
             if (lastParsedEvents.length === 0) return;
             const name = fileNameInput.value.trim();
@@ -739,12 +730,12 @@
             saveCloudBtn.disabled = true;
             saveCloudBtn.textContent = 'Saving...';
             try {
-                await addDoc(logsCollection, {
+                const { error } = await supabase.from('saved_logs').insert({
                     name: name,
                     events: lastParsedEvents,
-                    eventCount: lastParsedEvents.length,
-                    createdAt: serverTimestamp()
+                    event_count: lastParsedEvents.length
                 });
+                if (error) throw error;
                 showStatus('Saved to cloud!', 'success');
                 loadSavedLogs();
             } catch (err) {
@@ -755,28 +746,31 @@
             }
         });
 
-        // ---- Firebase: Load saved logs ----
+        // ---- Supabase: Load saved logs ----
         async function loadSavedLogs() {
             try {
-                const q = query(logsCollection, orderBy('createdAt', 'desc'));
-                const snapshot = await getDocs(q);
+                const { data, error } = await supabase
+                    .from('saved_logs')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-                if (snapshot.empty) {
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
                     savedLogList.innerHTML = '<p class="saved-logs-empty">No saved logs yet.</p>';
                     return;
                 }
 
                 savedLogList.innerHTML = '';
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const date = data.createdAt ? data.createdAt.toDate().toLocaleString() : 'unknown';
+                data.forEach(row => {
+                    const date = row.created_at ? new Date(row.created_at).toLocaleString() : 'unknown';
 
                     const item = document.createElement('div');
                     item.className = 'saved-log-item';
                     item.innerHTML = `
                         <div class="saved-log-info">
-                            <div class="saved-log-name">${escapeHtml(data.name)}</div>
-                            <div class="saved-log-meta">${data.eventCount} event(s) &middot; ${escapeHtml(date)}</div>
+                            <div class="saved-log-name">${escapeHtml(row.name)}</div>
+                            <div class="saved-log-meta">${row.event_count} event(s) &middot; ${escapeHtml(date)}</div>
                         </div>
                         <div class="saved-log-actions">
                             <button class="btn load-btn">Load</button>
@@ -785,16 +779,17 @@
 
                     item.querySelector('.load-btn').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        lastParsedEvents = data.events;
-                        fileNameInput.value = data.name;
-                        renderEvents(data.events);
+                        lastParsedEvents = row.events;
+                        fileNameInput.value = row.name;
+                        renderEvents(row.events);
                     });
 
                     item.querySelector('.delete-btn').addEventListener('click', async (e) => {
                         e.stopPropagation();
-                        if (!confirm(`Delete "${data.name}"?`)) return;
+                        if (!confirm(`Delete "${row.name}"?`)) return;
                         try {
-                            await deleteDoc(doc(db, 'saved_logs', docSnap.id));
+                            const { error } = await supabase.from('saved_logs').delete().eq('id', row.id);
+                            if (error) throw error;
                             loadSavedLogs();
                         } catch (err) {
                             alert('Failed to delete: ' + err.message);
