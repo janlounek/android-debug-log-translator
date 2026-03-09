@@ -602,6 +602,221 @@
             gap: 8px;
         }
 
+        /* Copiable elements */
+        .copiable {
+            cursor: pointer;
+            position: relative;
+            border-radius: 3px;
+            transition: background 0.15s;
+        }
+
+        .copiable:hover {
+            background: rgba(168, 216, 234, 0.12);
+        }
+
+        .copiable.copied::after {
+            content: 'Copied!';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #5cb85c;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            animation: copiedFade 1s forwards;
+        }
+
+        @keyframes copiedFade {
+            0%, 70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Bug notepad */
+        .notepad-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notepad-overlay.open {
+            display: flex;
+        }
+
+        .notepad-panel {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .notepad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .notepad-header h2 {
+            color: #a8d8ea;
+            font-size: 1.1rem;
+        }
+
+        .notepad-close {
+            background: none;
+            border: none;
+            color: #7a7a9e;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .notepad-close:hover {
+            color: #e05555;
+            background: rgba(224, 85, 85, 0.1);
+        }
+
+        .notepad-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+
+        .notepad-body textarea {
+            width: 100%;
+            min-height: 300px;
+            background: #1a1a2e;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            color: #e0e0e0;
+            padding: 14px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .notepad-footer {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            border-top: 1px solid #0f3460;
+            justify-content: flex-end;
+        }
+
+        .notepad-footer .btn {
+            margin-top: 0;
+        }
+
+        .notepad-template {
+            margin-bottom: 12px;
+        }
+
+        .notepad-template-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #e0e0e0;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .notepad-template-line:hover {
+            background: rgba(168, 216, 234, 0.08);
+        }
+
+        .notepad-template-line .copy-hint {
+            opacity: 0;
+            font-size: 0.7rem;
+            color: #7a7a9e;
+            white-space: nowrap;
+            transition: opacity 0.15s;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .notepad-template-line:hover .copy-hint {
+            opacity: 1;
+        }
+
+        .notepad-platform-header {
+            color: #a8d8ea;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            padding: 4px 8px;
+        }
+
+        .notepad-platform-header:first-child {
+            margin-top: 0;
+        }
+
+        .notepad-placeholder {
+            background: #0f3460;
+            color: #a8d8ea;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-style: italic;
+        }
+
+        .notepad-tabs {
+            display: flex;
+            gap: 0;
+            padding: 0 20px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .notepad-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #7a7a9e;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .notepad-tab.active {
+            color: #a8d8ea;
+            border-bottom-color: #a8d8ea;
+        }
+
+        .notepad-tab:hover {
+            color: #a8d8ea;
+        }
+
+        .notepad-tab-content {
+            display: none;
+        }
+
+        .notepad-tab-content.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .input-panes,
             .results-columns {
@@ -674,9 +889,41 @@
                 <input type="text" id="fileName" placeholder="Enter a name for this log...">
                 <button class="btn" id="saveCloudBtn">Save to Cloud</button>
                 <button class="btn" id="saveFileBtn">Download .txt</button>
+                <button class="btn" id="bugNotesBtn" style="background:#2a4a2a;color:#8fd88f;">Bug Notes</button>
             </div>
             <div class="status-msg" id="statusMsg"></div>
             <div id="eventList"></div>
+        </div>
+    </div>
+
+    <!-- Bug Notes Notepad -->
+    <div class="notepad-overlay" id="notepadOverlay">
+        <div class="notepad-panel">
+            <div class="notepad-header">
+                <h2>Bug Notes</h2>
+                <button class="notepad-close" id="notepadClose">&times;</button>
+            </div>
+            <div class="notepad-tabs">
+                <button class="notepad-tab active" data-tab="template">Template</button>
+                <button class="notepad-tab" data-tab="freeform">Free-form</button>
+            </div>
+            <div class="notepad-body">
+                <div class="notepad-tab-content active" id="tabTemplate">
+                    <p style="color:#7a7a9e;font-size:0.8rem;margin-bottom:10px;">Click any line to copy it. Edit the placeholders after pasting.</p>
+                    <div class="notepad-template" id="notepadTemplateLines"></div>
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                        <button class="btn" id="addAndroidLine" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">+ Android line</button>
+                        <button class="btn" id="addIosLine" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">+ iOS line</button>
+                        <button class="btn" id="copyAllTemplate" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">Copy all</button>
+                    </div>
+                </div>
+                <div class="notepad-tab-content" id="tabFreeform">
+                    <textarea id="notepadTextarea" placeholder="Write your bug notes here..."></textarea>
+                </div>
+            </div>
+            <div class="notepad-footer">
+                <button class="btn" id="notepadCopyFreeform" style="display:none;">Copy to clipboard</button>
+            </div>
         </div>
     </div>
 
@@ -714,10 +961,132 @@
         const saveFileBtn = document.getElementById('saveFileBtn');
         const statusMsg = document.getElementById('statusMsg');
         const savedLogList = document.getElementById('savedLogList');
+        const bugNotesBtn = document.getElementById('bugNotesBtn');
+        const notepadOverlay = document.getElementById('notepadOverlay');
+        const notepadClose = document.getElementById('notepadClose');
+        const notepadTemplateLines = document.getElementById('notepadTemplateLines');
+        const notepadTextarea = document.getElementById('notepadTextarea');
+        const notepadCopyFreeform = document.getElementById('notepadCopyFreeform');
 
         let androidEvents = [];
         let iosEvents = [];
         let lastParsedEvents = [];
+
+        // ---- Bug Notes Notepad ----
+        const BUG_TEMPLATE = 'V parametru <param_name> se notifikuje chybná hodnota <param_value>, dle specifikace by se měla notifikovat hodnota "X"';
+
+        let templateState = { android: 1, ios: 1 };
+
+        function flashCopied(el) {
+            el.classList.add('copied');
+            setTimeout(() => el.classList.remove('copied'), 1000);
+        }
+
+        function copyText(text, el) {
+            navigator.clipboard.writeText(text).then(() => {
+                if (el) flashCopied(el);
+            });
+        }
+
+        function buildTemplateLines() {
+            notepadTemplateLines.innerHTML = '';
+
+            // Android section
+            const aHeader = document.createElement('div');
+            aHeader.className = 'notepad-platform-header';
+            aHeader.textContent = 'Android:';
+            notepadTemplateLines.appendChild(aHeader);
+
+            for (let i = 1; i <= templateState.android; i++) {
+                notepadTemplateLines.appendChild(createTemplateLine(i, 'android'));
+            }
+
+            // iOS section
+            const iHeader = document.createElement('div');
+            iHeader.className = 'notepad-platform-header';
+            iHeader.textContent = 'iOS:';
+            notepadTemplateLines.appendChild(iHeader);
+
+            for (let i = 1; i <= templateState.ios; i++) {
+                notepadTemplateLines.appendChild(createTemplateLine(i, 'ios'));
+            }
+        }
+
+        function createTemplateLine(num, platform) {
+            const line = document.createElement('div');
+            line.className = 'notepad-template-line';
+            const text = `${num}. ${BUG_TEMPLATE}`;
+            line.innerHTML = `<span>${num}. V parametru <span class="notepad-placeholder">&lt;param_name&gt;</span> se notifikuje chybná hodnota <span class="notepad-placeholder">&lt;param_value&gt;</span>, dle specifikace by se měla notifikovat hodnota "X"</span><span class="copy-hint">click to copy</span>`;
+            line.addEventListener('click', () => copyText(text, line));
+            line.dataset.platform = platform;
+            line.dataset.num = num;
+            return line;
+        }
+
+        function getAllTemplateText() {
+            let text = 'Android:\n';
+            for (let i = 1; i <= templateState.android; i++) {
+                text += `${i}. ${BUG_TEMPLATE}\n`;
+            }
+            text += '\niOS:\n';
+            for (let i = 1; i <= templateState.ios; i++) {
+                text += `${i}. ${BUG_TEMPLATE}\n`;
+            }
+            return text.trim();
+        }
+
+        bugNotesBtn.addEventListener('click', () => {
+            buildTemplateLines();
+            notepadOverlay.classList.add('open');
+        });
+
+        notepadClose.addEventListener('click', () => {
+            notepadOverlay.classList.remove('open');
+        });
+
+        notepadOverlay.addEventListener('click', (e) => {
+            if (e.target === notepadOverlay) notepadOverlay.classList.remove('open');
+        });
+
+        document.getElementById('addAndroidLine').addEventListener('click', () => {
+            templateState.android++;
+            buildTemplateLines();
+        });
+
+        document.getElementById('addIosLine').addEventListener('click', () => {
+            templateState.ios++;
+            buildTemplateLines();
+        });
+
+        document.getElementById('copyAllTemplate').addEventListener('click', (e) => {
+            const text = getAllTemplateText();
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = e.target;
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy all'; }, 1200);
+            });
+        });
+
+        // Tabs
+        document.querySelectorAll('.notepad-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.notepad-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.notepad-tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.tab === 'template' ? 'tabTemplate' : 'tabFreeform';
+                document.getElementById(target).classList.add('active');
+                notepadCopyFreeform.style.display = tab.dataset.tab === 'freeform' ? '' : 'none';
+            });
+        });
+
+        notepadCopyFreeform.addEventListener('click', (e) => {
+            const text = notepadTextarea.value;
+            if (!text.trim()) return;
+            navigator.clipboard.writeText(text).then(() => {
+                e.target.textContent = 'Copied!';
+                setTimeout(() => { e.target.textContent = 'Copy to clipboard'; }, 1200);
+            });
+        });
 
         // ---- Supabase: Save to cloud ----
         saveCloudBtn.addEventListener('click', async () => {
@@ -987,8 +1356,8 @@
             let html = '<table class="param-table">';
             for (const p of params) {
                 html += `<tr>
-                    <td class="param-key">${escapeHtml(p.key)}</td>
-                    <td class="param-value">${escapeHtml(p.value)}</td>
+                    <td class="param-key copiable" data-copy="${escapeHtml(p.key)}" title="Click to copy">${escapeHtml(p.key)}</td>
+                    <td class="param-value copiable" data-copy="${escapeHtml(p.value)}" title="Click to copy">${escapeHtml(p.value)}</td>
                 </tr>`;
             }
             html += '</table>';
@@ -1284,9 +1653,9 @@
                         <table class="diff-table">
                             <tr><th style="width:1%;white-space:nowrap;">Parameter</th><th>Android</th><th>iOS</th></tr>
                             ${valueDiffs.map(d => `<tr>
-                                <td class="param-key">${escapeHtml(d.key)}</td>
-                                <td class="val-diff">${escapeHtml(d.android)}</td>
-                                <td class="val-diff">${escapeHtml(d.ios)}</td>
+                                <td class="param-key copiable" data-copy="${escapeHtml(d.key)}" title="Click to copy">${escapeHtml(d.key)}</td>
+                                <td class="val-diff copiable" data-copy="${escapeHtml(d.android)}" title="Click to copy">${escapeHtml(d.android)}</td>
+                                <td class="val-diff copiable" data-copy="${escapeHtml(d.ios)}" title="Click to copy">${escapeHtml(d.ios)}</td>
                             </tr>`).join('')}
                         </table>
                     </div>`;
@@ -1297,8 +1666,8 @@
                         <div class="diff-warning-title">Only in Android (${onlyAndroid.length})</div>
                         <table class="diff-table">
                             ${onlyAndroid.map(d => `<tr>
-                                <td class="param-key">${escapeHtml(d.key)}</td>
-                                <td class="val-diff">${escapeHtml(d.android)}</td>
+                                <td class="param-key copiable" data-copy="${escapeHtml(d.key)}" title="Click to copy">${escapeHtml(d.key)}</td>
+                                <td class="val-diff copiable" data-copy="${escapeHtml(d.android)}" title="Click to copy">${escapeHtml(d.android)}</td>
                             </tr>`).join('')}
                         </table>
                     </div>`;
@@ -1309,8 +1678,8 @@
                         <div class="diff-warning-title">Only in iOS (${onlyIos.length})</div>
                         <table class="diff-table">
                             ${onlyIos.map(d => `<tr>
-                                <td class="param-key">${escapeHtml(d.key)}</td>
-                                <td class="val-diff">${escapeHtml(d.ios)}</td>
+                                <td class="param-key copiable" data-copy="${escapeHtml(d.key)}" title="Click to copy">${escapeHtml(d.key)}</td>
+                                <td class="val-diff copiable" data-copy="${escapeHtml(d.ios)}" title="Click to copy">${escapeHtml(d.ios)}</td>
                             </tr>`).join('')}
                         </table>
                     </div>`;
@@ -1401,6 +1770,15 @@
                 </div>
             </div>`;
         }
+
+        // ---- Copiable param click delegation ----
+        document.addEventListener('click', (e) => {
+            const copiable = e.target.closest('.copiable[data-copy]');
+            if (copiable) {
+                const text = copiable.getAttribute('data-copy');
+                navigator.clipboard.writeText(text).then(() => flashCopied(copiable));
+            }
+        });
 
         // ---- Init ----
         loadSavedLogs();
