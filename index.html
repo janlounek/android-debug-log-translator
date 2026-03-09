@@ -723,63 +723,6 @@
             margin-top: 0;
         }
 
-        .notepad-template {
-            margin-bottom: 12px;
-        }
-
-        .notepad-template-line {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 6px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.15s;
-            font-family: 'Consolas', monospace;
-            font-size: 0.85rem;
-            color: #e0e0e0;
-            line-height: 1.5;
-            position: relative;
-        }
-
-        .notepad-template-line:hover {
-            background: rgba(168, 216, 234, 0.08);
-        }
-
-        .notepad-template-line .copy-hint {
-            opacity: 0;
-            font-size: 0.7rem;
-            color: #7a7a9e;
-            white-space: nowrap;
-            transition: opacity 0.15s;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        .notepad-template-line:hover .copy-hint {
-            opacity: 1;
-        }
-
-        .notepad-platform-header {
-            color: #a8d8ea;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 12px;
-            margin-bottom: 4px;
-            padding: 4px 8px;
-        }
-
-        .notepad-platform-header:first-child {
-            margin-top: 0;
-        }
-
-        .notepad-placeholder {
-            background: #0f3460;
-            color: #a8d8ea;
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-style: italic;
-        }
 
         .notepad-tabs {
             display: flex;
@@ -909,12 +852,13 @@
             </div>
             <div class="notepad-body">
                 <div class="notepad-tab-content active" id="tabTemplate">
-                    <p style="color:#7a7a9e;font-size:0.8rem;margin-bottom:10px;">Click any line to copy it. Edit the placeholders after pasting.</p>
-                    <div class="notepad-template" id="notepadTemplateLines"></div>
+                    <p style="color:#7a7a9e;font-size:0.8rem;margin-bottom:10px;">Edit directly — click any parameter in the log to copy it, then paste here.</p>
+                    <textarea id="templateTextarea" placeholder="Bug report template..."></textarea>
                     <div style="margin-top:12px;display:flex;gap:8px;">
                         <button class="btn" id="addAndroidLine" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">+ Android line</button>
                         <button class="btn" id="addIosLine" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">+ iOS line</button>
                         <button class="btn" id="copyAllTemplate" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">Copy all</button>
+                        <button class="btn" id="resetTemplate" style="margin-top:0;font-size:0.8rem;padding:6px 14px;background:#5a1a1a;color:#e8a0a0;">Reset</button>
                     </div>
                 </div>
                 <div class="notepad-tab-content" id="tabFreeform">
@@ -964,7 +908,7 @@
         const bugNotesBtn = document.getElementById('bugNotesBtn');
         const notepadOverlay = document.getElementById('notepadOverlay');
         const notepadClose = document.getElementById('notepadClose');
-        const notepadTemplateLines = document.getElementById('notepadTemplateLines');
+        const templateTextarea = document.getElementById('templateTextarea');
         const notepadTextarea = document.getElementById('notepadTextarea');
         const notepadCopyFreeform = document.getElementById('notepadCopyFreeform');
 
@@ -973,7 +917,7 @@
         let lastParsedEvents = [];
 
         // ---- Bug Notes Notepad ----
-        const BUG_TEMPLATE = 'V parametru <param_name> se notifikuje chybná hodnota <param_value>, dle specifikace by se měla notifikovat hodnota "X"';
+        const BUG_LINE = 'V parametru <param_name> se notifikuje chybná hodnota <param_value>, dle specifikace by se měla notifikovat hodnota "X"';
 
         let templateState = { android: 1, ios: 1 };
 
@@ -982,61 +926,61 @@
             setTimeout(() => el.classList.remove('copied'), 1000);
         }
 
-        function copyText(text, el) {
-            navigator.clipboard.writeText(text).then(() => {
-                if (el) flashCopied(el);
-            });
-        }
-
-        function buildTemplateLines() {
-            notepadTemplateLines.innerHTML = '';
-
-            // Android section
-            const aHeader = document.createElement('div');
-            aHeader.className = 'notepad-platform-header';
-            aHeader.textContent = 'Android:';
-            notepadTemplateLines.appendChild(aHeader);
-
-            for (let i = 1; i <= templateState.android; i++) {
-                notepadTemplateLines.appendChild(createTemplateLine(i, 'android'));
-            }
-
-            // iOS section
-            const iHeader = document.createElement('div');
-            iHeader.className = 'notepad-platform-header';
-            iHeader.textContent = 'iOS:';
-            notepadTemplateLines.appendChild(iHeader);
-
-            for (let i = 1; i <= templateState.ios; i++) {
-                notepadTemplateLines.appendChild(createTemplateLine(i, 'ios'));
-            }
-        }
-
-        function createTemplateLine(num, platform) {
-            const line = document.createElement('div');
-            line.className = 'notepad-template-line';
-            const text = `${num}. ${BUG_TEMPLATE}`;
-            line.innerHTML = `<span>${num}. V parametru <span class="notepad-placeholder">&lt;param_name&gt;</span> se notifikuje chybná hodnota <span class="notepad-placeholder">&lt;param_value&gt;</span>, dle specifikace by se měla notifikovat hodnota "X"</span><span class="copy-hint">click to copy</span>`;
-            line.addEventListener('click', () => copyText(text, line));
-            line.dataset.platform = platform;
-            line.dataset.num = num;
-            return line;
-        }
-
-        function getAllTemplateText() {
+        function buildTemplateText() {
             let text = 'Android:\n';
             for (let i = 1; i <= templateState.android; i++) {
-                text += `${i}. ${BUG_TEMPLATE}\n`;
+                text += `${i}. ${BUG_LINE}\n`;
             }
             text += '\niOS:\n';
             for (let i = 1; i <= templateState.ios; i++) {
-                text += `${i}. ${BUG_TEMPLATE}\n`;
+                text += `${i}. ${BUG_LINE}\n`;
             }
-            return text.trim();
+            return text.trimEnd();
+        }
+
+        function initTemplate() {
+            if (!templateTextarea.value) {
+                templateTextarea.value = buildTemplateText();
+            }
+        }
+
+        function addTemplateLine(platform) {
+            templateState[platform]++;
+            const newLine = `${templateState[platform]}. ${BUG_LINE}`;
+            const text = templateTextarea.value;
+            const header = platform === 'android' ? 'Android:' : 'iOS:';
+
+            // Find the section and append a new line at the end of it
+            const lines = text.split('\n');
+            let insertIdx = -1;
+            let inSection = false;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === header) {
+                    inSection = true;
+                    continue;
+                }
+                if (inSection) {
+                    // We're past the header; keep going until we hit a blank line or another header
+                    if (lines[i].trim() === '' || (lines[i].trim().endsWith(':') && lines[i].trim() !== header)) {
+                        insertIdx = i;
+                        inSection = false;
+                        break;
+                    }
+                }
+            }
+            if (inSection) {
+                // Section goes to end of text
+                lines.push(newLine);
+            } else if (insertIdx !== -1) {
+                lines.splice(insertIdx, 0, newLine);
+            } else {
+                lines.push(newLine);
+            }
+            templateTextarea.value = lines.join('\n');
         }
 
         bugNotesBtn.addEventListener('click', () => {
-            buildTemplateLines();
+            initTemplate();
             notepadOverlay.classList.add('open');
         });
 
@@ -1049,22 +993,26 @@
         });
 
         document.getElementById('addAndroidLine').addEventListener('click', () => {
-            templateState.android++;
-            buildTemplateLines();
+            addTemplateLine('android');
         });
 
         document.getElementById('addIosLine').addEventListener('click', () => {
-            templateState.ios++;
-            buildTemplateLines();
+            addTemplateLine('ios');
         });
 
         document.getElementById('copyAllTemplate').addEventListener('click', (e) => {
-            const text = getAllTemplateText();
+            const text = templateTextarea.value;
+            if (!text.trim()) return;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = e.target;
                 btn.textContent = 'Copied!';
                 setTimeout(() => { btn.textContent = 'Copy all'; }, 1200);
             });
+        });
+
+        document.getElementById('resetTemplate').addEventListener('click', () => {
+            templateState = { android: 1, ios: 1 };
+            templateTextarea.value = buildTemplateText();
         });
 
         // Tabs
