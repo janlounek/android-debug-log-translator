@@ -781,7 +781,15 @@
                         e.stopPropagation();
                         lastParsedEvents = row.events;
                         fileNameInput.value = row.name;
-                        renderEvents(row.events);
+
+                        // Restore platform arrays so compare toggle works
+                        const aEvts = row.events.filter(ev => ev.platform === 'android');
+                        const iEvts = row.events.filter(ev => ev.platform === 'ios');
+                        if (aEvts.length > 0) androidEvents = aEvts;
+                        if (iEvts.length > 0) iosEvents = iEvts;
+
+                        updateCompareToggle();
+                        refreshView();
                     });
 
                     item.querySelector('.delete-btn').addEventListener('click', async (e) => {
