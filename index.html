@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Android & iOS Debug Log Translator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://cdn.prod.website-files.com/682b2441b47310addfcce721/68a86344e5670b4bf73650ec_group_favicon.png">
     <style>
         * {
             margin: 0;
@@ -12,25 +16,32 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a2e;
-            color: #e0e0e0;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: #030419;
+            color: #fafafa;
             min-height: 100vh;
         }
 
         header {
-            background: #16213e;
+            background: #0d0e2b;
             padding: 24px 32px;
-            border-bottom: 2px solid #0f3460;
+            border-bottom: 2px solid #6d3e91;
+        }
+
+        .brand-logo {
+            display: block;
+            height: 44px;
+            width: auto;
+            margin-bottom: 16px;
         }
 
         header h1 {
             font-size: 1.5rem;
-            color: #a8d8ea;
+            color: #ffffff;
         }
 
         header p {
-            color: #7a7a9e;
+            color: #9393b0;
             font-size: 0.9rem;
             margin-top: 4px;
         }
@@ -43,29 +54,29 @@
 
         /* Upload area */
         .upload-area {
-            border: 2px dashed #0f3460;
+            border: 2px dashed #6d3e91;
             border-radius: 12px;
             padding: 48px;
             text-align: center;
             cursor: pointer;
             transition: border-color 0.2s, background 0.2s;
-            background: #16213e;
+            background: #0d0e2b;
         }
 
         .upload-area:hover,
         .upload-area.dragover {
-            border-color: #a8d8ea;
-            background: #1a2744;
+            border-color: #ffffff;
+            background: #15163a;
         }
 
         .upload-area h2 {
-            color: #a8d8ea;
+            color: #ffffff;
             margin-bottom: 8px;
             font-size: 1.2rem;
         }
 
         .upload-area p {
-            color: #7a7a9e;
+            color: #9393b0;
             font-size: 0.9rem;
         }
 
@@ -80,7 +91,7 @@
 
         .paste-section label {
             display: block;
-            color: #a8d8ea;
+            color: #ffffff;
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -88,10 +99,10 @@
         .paste-section textarea {
             width: 100%;
             height: 160px;
-            background: #16213e;
-            border: 1px solid #0f3460;
+            background: #0d0e2b;
+            border: 1px solid #6d3e91;
             border-radius: 8px;
-            color: #e0e0e0;
+            color: #fafafa;
             padding: 12px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.85rem;
@@ -100,15 +111,15 @@
 
         .paste-section textarea:focus {
             outline: none;
-            border-color: #a8d8ea;
+            border-color: #ffffff;
         }
 
         .btn {
             display: inline-block;
             margin-top: 12px;
             padding: 10px 28px;
-            background: #0f3460;
-            color: #a8d8ea;
+            background: #6d3e91;
+            color: #ffffff;
             border: none;
             border-radius: 6px;
             font-size: 0.95rem;
@@ -118,7 +129,7 @@
         }
 
         .btn:hover {
-            background: #1a4a8a;
+            background: #7a4d99;
         }
 
         .btn.btn-danger {
@@ -135,69 +146,7 @@
             cursor: not-allowed;
         }
 
-        /* Saved logs section */
-        .saved-logs {
-            margin-top: 28px;
-            background: #16213e;
-            border: 1px solid #0f3460;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .saved-logs h2 {
-            color: #a8d8ea;
-            font-size: 1.1rem;
-            margin-bottom: 14px;
-        }
-
-        .saved-log-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .saved-log-item:hover {
-            background: #1a2744;
-        }
-
-        .saved-log-info {
-            flex: 1;
-        }
-
-        .saved-log-name {
-            font-weight: 600;
-            color: #a8d8ea;
-        }
-
-        .saved-log-meta {
-            font-size: 0.8rem;
-            color: #7a7a9e;
-            margin-top: 2px;
-        }
-
-        .saved-log-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .saved-log-actions button {
-            padding: 4px 12px;
-            font-size: 0.8rem;
-            margin-top: 0;
-        }
-
-        .saved-logs-empty {
-            color: #7a7a9e;
-            font-size: 0.9rem;
-        }
-
-        /* Results */
+                /* Results */
         .results {
             margin-top: 32px;
         }
@@ -210,21 +159,21 @@
         }
 
         .results-header h2 {
-            color: #a8d8ea;
+            color: #ffffff;
             font-size: 1.2rem;
         }
 
         .badge {
-            background: #0f3460;
-            color: #a8d8ea;
+            background: #6d3e91;
+            color: #ffffff;
             padding: 4px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
         }
 
         .event-card {
-            background: #16213e;
-            border: 1px solid #0f3460;
+            background: #0d0e2b;
+            border: 1px solid #6d3e91;
             border-radius: 10px;
             margin-bottom: 16px;
             overflow: hidden;
@@ -240,7 +189,7 @@
         }
 
         .event-card-header.track-state {
-            background: #0f3460;
+            background: #6d3e91;
         }
 
         .event-card-header.track-action {
@@ -250,7 +199,7 @@
         .event-name {
             font-weight: 700;
             font-size: 1rem;
-            color: #a8d8ea;
+            color: #ffffff;
             word-break: break-all;
         }
 
@@ -264,8 +213,8 @@
         }
 
         .event-type-badge.state {
-            background: #1a4a8a;
-            color: #a8d8ea;
+            background: #7a4d99;
+            color: #ffffff;
         }
 
         .event-type-badge.action {
@@ -274,7 +223,7 @@
         }
 
         .event-timestamp {
-            color: #7a7a9e;
+            color: #9393b0;
             font-size: 0.85rem;
             font-family: 'Consolas', monospace;
         }
@@ -302,7 +251,7 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #7a7a9e;
+            color: #9393b0;
             margin-bottom: 8px;
             font-weight: 600;
         }
@@ -313,7 +262,7 @@
         }
 
         .param-table tr:not(:last-child) td {
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #6d3e91;
         }
 
         .param-table td {
@@ -323,7 +272,7 @@
         }
 
         .param-key {
-            color: #53a8b6;
+            color: #ea6121;
             font-family: 'Consolas', monospace;
             white-space: nowrap;
             padding-right: 16px;
@@ -331,7 +280,7 @@
         }
 
         .param-value {
-            color: #e0e0e0;
+            color: #fafafa;
             font-family: 'Consolas', monospace;
             word-break: break-all;
         }
@@ -348,7 +297,7 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #e05555;
+            color: #ff0b51;
             font-weight: 700;
             margin-bottom: 6px;
         }
@@ -367,7 +316,7 @@
 
         .missing-params-list li::before {
             content: "- ";
-            color: #e05555;
+            color: #ff0b51;
         }
 
         .event-card.has-errors {
@@ -386,17 +335,17 @@
             flex: 1;
             min-width: 200px;
             padding: 10px 14px;
-            background: #16213e;
-            border: 1px solid #0f3460;
+            background: #0d0e2b;
+            border: 1px solid #6d3e91;
             border-radius: 6px;
-            color: #e0e0e0;
+            color: #fafafa;
             font-size: 0.95rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .save-bar input[type="text"]:focus {
             outline: none;
-            border-color: #a8d8ea;
+            border-color: #ffffff;
         }
 
         .status-msg {
@@ -406,15 +355,15 @@
         }
 
         .status-msg.success { color: #5cb85c; }
-        .status-msg.error { color: #e05555; }
+        .status-msg.error { color: #ff0b51; }
 
         .no-results {
             text-align: center;
-            color: #7a7a9e;
+            color: #9393b0;
             padding: 40px;
-            background: #16213e;
+            background: #0d0e2b;
             border-radius: 10px;
-            border: 1px solid #0f3460;
+            border: 1px solid #6d3e91;
         }
 
         .hidden {
@@ -432,7 +381,7 @@
         }
 
         .input-pane h3 {
-            color: #a8d8ea;
+            color: #ffffff;
             font-size: 1.1rem;
             margin-bottom: 12px;
         }
@@ -458,8 +407,8 @@
         .compare-bar {
             margin-top: 20px;
             padding: 14px 20px;
-            background: #16213e;
-            border: 1px solid #0f3460;
+            background: #0d0e2b;
+            border: 1px solid #6d3e91;
             border-radius: 10px;
         }
 
@@ -468,20 +417,20 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            color: #a8d8ea;
+            color: #ffffff;
             font-weight: 600;
             font-size: 0.95rem;
         }
 
         .compare-toggle.disabled {
-            color: #7a7a9e;
+            color: #9393b0;
             cursor: not-allowed;
         }
 
         .compare-toggle input[type="checkbox"] {
             width: 18px;
             height: 18px;
-            accent-color: #a8d8ea;
+            accent-color: #ffffff;
             cursor: pointer;
         }
 
@@ -500,8 +449,8 @@
         }
 
         .platform-badge.ios {
-            background: #1a237e;
-            color: #9fa8da;
+            background: #3d2a6b;
+            color: #c9a9e6;
         }
 
         .only-badge {
@@ -517,8 +466,8 @@
         }
 
         .only-badge.only-ios {
-            background: #1a237e;
-            color: #9fa8da;
+            background: #3d2a6b;
+            color: #c9a9e6;
         }
 
         .diff-warning {
@@ -549,9 +498,9 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #7a7a9e;
+            color: #9393b0;
             font-weight: 600;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #6d3e91;
         }
 
         .diff-table td {
@@ -562,7 +511,7 @@
         }
 
         .diff-table tr:not(:last-child) td {
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #6d3e91;
         }
 
         .diff-table .param-key {
@@ -575,7 +524,7 @@
         }
 
         .diff-table .val-missing {
-            color: #e05555;
+            color: #ff0b51;
             font-style: italic;
         }
 
@@ -594,7 +543,7 @@
         }
 
         .results-column-header {
-            color: #a8d8ea;
+            color: #ffffff;
             font-size: 1rem;
             margin-bottom: 12px;
             display: flex;
@@ -643,8 +592,8 @@
             right: 32px;
             width: 520px;
             max-height: 80vh;
-            background: #16213e;
-            border: 1px solid #0f3460;
+            background: #0d0e2b;
+            border: 1px solid #6d3e91;
             border-radius: 12px;
             flex-direction: column;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
@@ -664,7 +613,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #6d3e91;
             cursor: grab;
             user-select: none;
         }
@@ -674,7 +623,7 @@
         }
 
         .notepad-header h2 {
-            color: #a8d8ea;
+            color: #ffffff;
             font-size: 1.05rem;
             pointer-events: none;
         }
@@ -688,7 +637,7 @@
         .notepad-minimize, .notepad-close {
             background: none;
             border: none;
-            color: #7a7a9e;
+            color: #9393b0;
             font-size: 1.2rem;
             cursor: pointer;
             padding: 2px 6px;
@@ -698,12 +647,12 @@
         }
 
         .notepad-minimize:hover {
-            color: #a8d8ea;
+            color: #ffffff;
             background: rgba(168, 216, 234, 0.1);
         }
 
         .notepad-close:hover {
-            color: #e05555;
+            color: #ff0b51;
             background: rgba(224, 85, 85, 0.1);
         }
 
@@ -716,10 +665,10 @@
         .notepad-body textarea {
             width: 100%;
             min-height: 200px;
-            background: #1a1a2e;
-            border: 1px solid #0f3460;
+            background: #030419;
+            border: 1px solid #6d3e91;
             border-radius: 8px;
-            color: #e0e0e0;
+            color: #fafafa;
             padding: 12px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 0.85rem;
@@ -731,7 +680,7 @@
             display: flex;
             gap: 8px;
             padding: 10px 16px;
-            border-top: 1px solid #0f3460;
+            border-top: 1px solid #6d3e91;
             justify-content: flex-end;
         }
 
@@ -756,14 +705,14 @@
             display: flex;
             gap: 0;
             padding: 0 20px;
-            border-bottom: 1px solid #0f3460;
+            border-bottom: 1px solid #6d3e91;
         }
 
         .notepad-tab {
             padding: 10px 20px;
             background: none;
             border: none;
-            color: #7a7a9e;
+            color: #9393b0;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
@@ -772,12 +721,12 @@
         }
 
         .notepad-tab.active {
-            color: #a8d8ea;
-            border-bottom-color: #a8d8ea;
+            color: #ffffff;
+            border-bottom-color: #ffffff;
         }
 
         .notepad-tab:hover {
-            color: #a8d8ea;
+            color: #ffffff;
         }
 
         .notepad-tab-content {
@@ -798,20 +747,13 @@
 </head>
 <body>
     <header>
+        <img class="brand-logo" src="etnetera-group.svg" alt="Etnetera Group">
         <h1>Android & iOS Debug Log Translator</h1>
         <p>Upload or paste Android or iOS debug logs to extract and format analytics events</p>
     </header>
 
     <div class="container">
-        <!-- Saved logs from cloud -->
-        <div class="saved-logs">
-            <h2>Saved Logs</h2>
-            <div id="savedLogList">
-                <p class="saved-logs-empty">Loading...</p>
-            </div>
-        </div>
-
-        <div class="input-panes" style="margin-top: 28px;">
+        <div class="input-panes">
             <div class="input-pane">
                 <h3>Android Log</h3>
                 <div class="upload-area" id="uploadAreaAndroid">
@@ -858,7 +800,6 @@
             </div>
             <div class="save-bar">
                 <input type="text" id="fileName" placeholder="Enter a name for this log...">
-                <button class="btn" id="saveCloudBtn">Save to Cloud</button>
                 <button class="btn" id="saveFileBtn">Download .txt</button>
                 <button class="btn" id="bugNotesBtn" style="background:#2a4a2a;color:#8fd88f;">Bug Notes</button>
             </div>
@@ -882,7 +823,7 @@
             </div>
             <div class="notepad-body">
                 <div class="notepad-tab-content active" id="tabTemplate">
-                    <p style="color:#7a7a9e;font-size:0.8rem;margin-bottom:10px;">Edit directly — click any parameter in the log to copy it, then paste here.</p>
+                    <p style="color:#9393b0;font-size:0.8rem;margin-bottom:10px;">Edit directly — click any parameter in the log to copy it, then paste here.</p>
                     <textarea id="templateTextarea" placeholder="Bug report template..."></textarea>
                     <div style="margin-top:12px;display:flex;gap:8px;">
                         <button class="btn" id="addAndroidLine" style="margin-top:0;font-size:0.8rem;padding:6px 14px;">+ Android line</button>
@@ -900,14 +841,7 @@
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-        const SUPABASE_URL = "https://pqgtlccgvhvxtirhltyl.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxZ3RsY2Nndmh2eHRpcmhsdHlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NjAzNzIsImV4cCI6MjA4ODUzNjM3Mn0.3fqap5eZaPAVQDPiTNl-Z0lZm9ennCMW8UG1VyteHhI";
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+    <script>
         // DOM elements
         const uploadAreaAndroid = document.getElementById('uploadAreaAndroid');
         const fileInputAndroid = document.getElementById('fileInputAndroid');
@@ -930,10 +864,8 @@
         const eventList = document.getElementById('eventList');
         const eventCountEl = document.getElementById('eventCount');
         const fileNameInput = document.getElementById('fileName');
-        const saveCloudBtn = document.getElementById('saveCloudBtn');
         const saveFileBtn = document.getElementById('saveFileBtn');
         const statusMsg = document.getElementById('statusMsg');
-        const savedLogList = document.getElementById('savedLogList');
         const bugNotesBtn = document.getElementById('bugNotesBtn');
         const notepadPanel = document.getElementById('notepadPanel');
         const notepadHeader = document.getElementById('notepadHeader');
@@ -1100,98 +1032,6 @@
             });
         });
 
-        // ---- Supabase: Save to cloud ----
-        saveCloudBtn.addEventListener('click', async () => {
-            if (lastParsedEvents.length === 0) return;
-            const name = fileNameInput.value.trim();
-            if (!name) {
-                showStatus('Please enter a name for this log.', 'error');
-                return;
-            }
-            saveCloudBtn.disabled = true;
-            saveCloudBtn.textContent = 'Saving...';
-            try {
-                const { error } = await supabase.from('saved_logs').insert({
-                    name: name,
-                    events: lastParsedEvents,
-                    event_count: lastParsedEvents.length
-                });
-                if (error) throw error;
-                showStatus('Saved to cloud!', 'success');
-                loadSavedLogs();
-            } catch (err) {
-                showStatus('Failed to save: ' + err.message, 'error');
-            } finally {
-                saveCloudBtn.disabled = false;
-                saveCloudBtn.textContent = 'Save to Cloud';
-            }
-        });
-
-        // ---- Supabase: Load saved logs ----
-        async function loadSavedLogs() {
-            try {
-                const { data, error } = await supabase
-                    .from('saved_logs')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    savedLogList.innerHTML = '<p class="saved-logs-empty">No saved logs yet.</p>';
-                    return;
-                }
-
-                savedLogList.innerHTML = '';
-                data.forEach(row => {
-                    const date = row.created_at ? new Date(row.created_at).toLocaleString() : 'unknown';
-
-                    const item = document.createElement('div');
-                    item.className = 'saved-log-item';
-                    item.innerHTML = `
-                        <div class="saved-log-info">
-                            <div class="saved-log-name">${escapeHtml(row.name)}</div>
-                            <div class="saved-log-meta">${row.event_count} event(s) &middot; ${escapeHtml(date)}</div>
-                        </div>
-                        <div class="saved-log-actions">
-                            <button class="btn load-btn">Load</button>
-                            <button class="btn btn-danger delete-btn">Delete</button>
-                        </div>`;
-
-                    item.querySelector('.load-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        lastParsedEvents = row.events;
-                        fileNameInput.value = row.name;
-
-                        // Restore platform arrays so compare toggle works
-                        const aEvts = row.events.filter(ev => ev.platform === 'android');
-                        const iEvts = row.events.filter(ev => ev.platform === 'ios');
-                        if (aEvts.length > 0) androidEvents = aEvts;
-                        if (iEvts.length > 0) iosEvents = iEvts;
-
-                        updateCompareToggle();
-                        refreshView();
-                    });
-
-                    item.querySelector('.delete-btn').addEventListener('click', async (e) => {
-                        e.stopPropagation();
-                        if (!confirm(`Delete "${row.name}"?`)) return;
-                        try {
-                            const { error } = await supabase.from('saved_logs').delete().eq('id', row.id);
-                            if (error) throw error;
-                            loadSavedLogs();
-                        } catch (err) {
-                            alert('Failed to delete: ' + err.message);
-                        }
-                    });
-
-                    savedLogList.appendChild(item);
-                });
-            } catch (err) {
-                savedLogList.innerHTML = `<p class="saved-logs-empty" style="color:#e05555">Failed to load saved logs: ${escapeHtml(err.message)}</p>`;
-            }
-        }
-
         // ---- Download .txt ----
         saveFileBtn.addEventListener('click', () => {
             if (lastParsedEvents.length === 0) return;
@@ -1290,7 +1130,7 @@
             androidStatusEl.textContent = androidEvents.length > 0
                 ? `${androidEvents.length} event(s) parsed`
                 : 'No AnalyticsTracker entries found';
-            androidStatusEl.style.color = androidEvents.length > 0 ? '#5cb85c' : '#e05555';
+            androidStatusEl.style.color = androidEvents.length > 0 ? '#5cb85c' : '#ff0b51';
             updateCompareToggle();
             refreshView();
         }
@@ -1300,7 +1140,7 @@
             iosStatusEl.textContent = iosEvents.length > 0
                 ? `${iosEvents.length} event(s) parsed`
                 : 'No iOS analytics entries found';
-            iosStatusEl.style.color = iosEvents.length > 0 ? '#5cb85c' : '#e05555';
+            iosStatusEl.style.color = iosEvents.length > 0 ? '#5cb85c' : '#ff0b51';
             updateCompareToggle();
             refreshView();
         }
@@ -1514,7 +1354,7 @@
                     <span class="event-timestamp">${escapeHtml(ev.timestamp)}</span>
                 </div>
                 <div class="event-card-body">
-                    ${bodyHtml || '<p style="color:#7a7a9e">No parameters found.</p>'}
+                    ${bodyHtml || '<p style="color:#9393b0">No parameters found.</p>'}
                 </div>
             </div>`;
         }
@@ -1778,7 +1618,7 @@
                     <span class="event-timestamp">${escapeHtml(ev.timestamp)}</span>
                 </div>
                 <div class="event-card-body">
-                    ${bodyHtml || '<p style="color:#7a7a9e">No parameters found.</p>'}
+                    ${bodyHtml || '<p style="color:#9393b0">No parameters found.</p>'}
                 </div>
             </div>`;
         }
@@ -1792,8 +1632,6 @@
             }
         });
 
-        // ---- Init ----
-        loadSavedLogs();
     </script>
 </body>
 </html>
